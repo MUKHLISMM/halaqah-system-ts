@@ -3,7 +3,7 @@ import React from 'react'
 
 interface Props extends ButtonProps{
 }
-export default function DeleteButton(props:Props) {
+export default function DeleteIcon(props:Props) {
   return (
             <Button
                 mx={2}

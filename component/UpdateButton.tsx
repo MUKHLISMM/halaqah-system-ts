@@ -1,16 +1,19 @@
 import { Button, ButtonProps } from '@chakra-ui/react'
 import React from 'react'
+import { TbEdit } from 'react-icons/tb'
+import { primaryColor } from '../theme'
 
 interface Props extends ButtonProps{
 }
-export default function UpdateButton(props:Props) {
+export default function UpadateButton(props:Props) {
   return (
             <Button
                 mx={2}
-                size="sm"
-                height="28px"
-                width="45px"
-                border="1px"
+                type="submit"
+                size="md"
+                height="45px"
+                width="130px"
+                border="2px"
                 borderRadius="3xl"
                 borderColor="orange.500"
                 _hover={{
@@ -21,6 +24,7 @@ export default function UpdateButton(props:Props) {
                 color={"orange.500"}
                 {...props}
               >
+                 <TbEdit size={30} />
                 {props.children}
               </Button>
   )

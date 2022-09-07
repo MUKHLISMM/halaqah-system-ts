@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Heading,
   Input,
   InputGroup,
@@ -10,17 +11,19 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { Form, DatePicker, notification, Select, Switch } from "antd";
+import { Form, DatePicker, notification, Select, Switch, Divider } from "antd";
 import moment from "moment";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import useSWR from "swr";
 import MyButton from "../component/MyButton";
+import SaveButton from "../component/SaveButton";
 import { fetcher, fetchWithToken } from "../config/axios";
 import { RulePassword } from "../constants/RulePassword";
 import { Account } from "../interface/account";
 import { Faculty } from "../interface/faculty";
 import { Major } from "../interface/major";
+import { primaryColor } from "../theme";
 interface Props {
   roleId: number;
   onSaveData: any;
@@ -53,7 +56,7 @@ export default function RegisterForm(props: Props) {
         form.setFieldsValue({
           ...account.student,
           ...account,
-          studentId:account?.studentId?.toString(),
+          studentId: account?.studentId?.toString(),
           birthDay: moment(account.student?.birthDay),
           confirmPassword: account.password,
         });
@@ -62,7 +65,7 @@ export default function RegisterForm(props: Props) {
         form.setFieldsValue({
           ...account.teacher,
           ...account,
-          teacherId:account?.teacherId?.toString(),
+          teacherId: account?.teacherId?.toString(),
           birthDay: moment(account.teacher?.birthDay),
           confirmPassword: account.password,
         });
@@ -78,9 +81,13 @@ export default function RegisterForm(props: Props) {
 
   return (
     <>
-      <Heading fontSize={"2xl"} color="black" textAlign={"center"} my={5}>
-        PROFILE
-      </Heading>
+      <Box textAlign={"center"} color="#757573">
+        <p>
+          Please!! check your infomation berfore sending or save Data for order
+          not to waste time in edited.
+        </p>
+      </Box>
+      <Divider style={{ borderColor: "#d8d8d8" }}>Profile Info</Divider>
 
       <Form
         onFinish={onFinish}
@@ -288,7 +295,7 @@ export default function RegisterForm(props: Props) {
                     .localeCompare(optionB.children.toLowerCase())
                 }
               >
-                <Select.Option value={2}>Teacher Admin</Select.Option>
+                <Select.Option value={2}>Admin</Select.Option>
                 <Select.Option value={3}>Teacher</Select.Option>
               </Select>
             </Form.Item>
@@ -306,10 +313,7 @@ export default function RegisterForm(props: Props) {
             </Form.Item>
           </Box>
         )}
-        {/* contact */}
-        <Heading fontSize={"2xl"} color="black" textAlign={"center"} my={1}>
-          CONTACT
-        </Heading>
+        <Divider style={{ borderColor: "#d8d8d8" }}>Contact</Divider>
 
         <Box
           display="grid"
@@ -341,15 +345,8 @@ export default function RegisterForm(props: Props) {
             <Input placeholder="mysite" />
           </Form.Item>
         </Box>
-        <Heading
-          fontSize={"2xl"}
-          color="black"
-          textAlign={"center"}
-          mt={5}
-          mb={30}
-        >
-          ACOUNT
-        </Heading>
+
+        <Divider style={{ borderColor: "#d8d8d8" }}>Account</Divider>
         <Box px={10}>
           <Form.Item
             name="email"
@@ -417,11 +414,17 @@ export default function RegisterForm(props: Props) {
           </Form.Item>
         </Box>
         <Box px={10}>
-          <Switch onChange={(v) => setShow(v)} /> Show password
+          <Checkbox
+            colorScheme="green"
+            isChecked={show}
+            onChange={(v) => setShow(!show)}
+          >
+            Show password
+          </Checkbox>
         </Box>
 
-        <Box textAlign={"center"} my={15}>
-          {saveButton ? saveButton : <MyButton>Save</MyButton>}
+        <Box textAlign={"center"}  py={10}>
+          {saveButton ? saveButton : <SaveButton>Register</SaveButton>}
         </Box>
       </Form>
     </>

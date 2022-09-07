@@ -1,24 +1,4 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spacer,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Divider, Flex, Heading, HStack, Spacer } from "@chakra-ui/react";
 import { Space, Table, Drawer, notification, Popconfirm } from "antd";
 import { ColumnsType, TableProps } from "antd/lib/table";
 import React, { useState } from "react";
@@ -26,19 +6,19 @@ import AddButton from "../../component/AddButton";
 import Tile from "../../component/Tile";
 import Template from "../../template/Template";
 import { MdDeleteOutline, MdPersonAddAlt1 } from "react-icons/md";
+import { TbEdit } from "react-icons/tb";
 import RegisterForm from "../../forms/RegisterForm";
 import { fetchWithToken, myAxios } from "../../config/axios";
 import CancelButton from "../../component/CancelButton";
 import MyButton from "../../component/MyButton";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
+import { getRole } from "../../function";
 import { Account } from "../../interface/account";
-import SaveButton from "../../component/SaveButton";
-import TabTeacherForm from "../../Tap/TabTeacherForm";
-import TabStudentForm from "../../Tap/TabStudentForm";
-import { primaryColor } from "../../theme";
+import UpdateIcon from "../../component/UpdateIcon";
+import DeleteButton from "../../component/DeleteIcon";
 
-export default function AccountList() {
+export default function All() {
   const { data: session }: any = useSession({ required: true });
   const { data: account } = useSWR<Account[]>(
     session?.user?.accessToken
@@ -47,7 +27,6 @@ export default function AccountList() {
     fetchWithToken
   );
   // console.log(account);
-  const [isShow, setIsShow] = useState();
   const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
   const saveData = async (values: any) => {
@@ -86,12 +65,13 @@ export default function AccountList() {
   };
   const updateData = async (values: any) => {
     try {
+      
       values = {
         ...values,
         birthDay: values.birthDay.format("YYYY-MM-DD"),
       };
       console.log(values.studentId);
-      let student = await myAxios.patch("/accounts/" + id, values, {
+      let student = await myAxios.patch("/accounts/"+id, values, {
         headers: {
           Authorization: `Bearer ${session?.user?.accessToken}`,
         },
@@ -124,6 +104,69 @@ export default function AccountList() {
     setShow(false);
   };
 
+  const columns: ColumnsType<any> = [
+    {
+      title: "ลำดับ",
+      render: (value, record, index) => {
+        return index + 1;
+      },
+    },
+    {
+      title: "UserName",
+      dataIndex: "userName",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      filters: [
+        { text: "TeacherAdmin", value: "TeacherAdmin" },
+        { text: "Teacher", value: "Teacher" },
+        { text: "Student", value: "Student" },
+      ],
+      onFilter: (value: any, record) => {
+        return record.role.indexOf(value) === 0;
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+    },
+    {
+      title: "Identification ID",
+      dataIndex: "identificationId",
+      render: (text) => <Box>{text}</Box>,
+    },
+    {
+      title: "Action",
+      key: "x",
+      width: "10%",
+      render: (value, record, index) => (
+        <Space size={3}>
+          <UpdateIcon
+            onClick={() => {
+              setId(value.id);
+              setShow(true);
+            }}
+          >
+            <TbEdit size={18} />
+          </UpdateIcon>
+          <DeleteButton>
+            <MdDeleteOutline size={18} />
+          </DeleteButton>
+        </Space>
+      ),
+    },
+  ];
+
+  const onChange: TableProps<any>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    // console.log("params", pagination, filters, sorter, extra);
+  };
+
   return (
     <Template>
       <HStack>
@@ -142,15 +185,7 @@ export default function AccountList() {
               <MdPersonAddAlt1 size={20} />
             </AddButton>
             <Drawer
-              title={
-                <>
-                  <Box textAlign={"center"}>
-                    <Heading pt={5} fontFamily="-moz-initial" fontSize={20}>
-                      CREATE A NEW ACCOUNT.
-                    </Heading>
-                  </Box>
-                </>
-              }
+              title="Create a new account"
               width={"large"}
               onClose={onClose}
               visible={show}
@@ -158,44 +193,34 @@ export default function AccountList() {
               // zIndex={2000}
             >
               <RegisterForm
-                onSaveData={id ? updateData : saveData}
-                roleId={
-                  id
-                    ? account?.find((item: Account) => item.id === id)
-                        ?.roleId || 3
-                    : 3
-                }
+                onSaveData={id? updateData:saveData}
+                roleId={id ? account?.find((item:Account)=>(item.id===id))?.roleId||3 : 3}
                 id={id}
                 saveButton={
                   <Space>
-                    <SaveButton>Save</SaveButton>
+                    {id?(<MyButton colorScheme="yellow">update</MyButton>):(<MyButton>Save</MyButton>)}
                     <Popconfirm title={"are your sure!"} onConfirm={onClose}>
-                      <CancelButton>Back</CancelButton>
+                      <CancelButton>Cancel</CancelButton>
                     </Popconfirm>
                   </Space>
                 }
               />
             </Drawer>
           </Flex>
-
-          <Tabs variant="enclosed">
-            <TabList>
-              <Tab fontFamily={"-moz-initial"} >Faculty-Admin</Tab>
-              <Tab fontFamily={"-moz-initial"}>Teacher</Tab>
-              <Tab fontFamily={"-moz-initial"}>Student</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <p>one!</p>
-              </TabPanel>
-              <TabPanel>
-                <TabTeacherForm />
-              </TabPanel>
-              <TabPanel>
-                <TabStudentForm />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+          <Divider />
+          <Table
+            columns={columns}
+            dataSource={account?.map((item: Account, i: number) => ({
+              ...item,
+              key: i + 1,
+              identificationId:
+                item.roleId === 4 ? item.studentId : item.teacherId,
+              role: getRole(item.roleId),
+            }))}
+            onChange={onChange}
+            bordered
+            size="small"
+          />
         </Tile>
       </HStack>
     </Template>

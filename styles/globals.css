@@ -14,12 +14,21 @@ a {
 * {
   box-sizing: border-box;
 }
+.ant-modal-content {
+  overflow: auto;
+  border-radius: 24px
+}
 .css-my3fbc{
   width: 100% !important;
 }
+.ant-divider-inner-text{
+  color:#969695;
+}
+
 .site-layout .site-layout-background {
   background: #fff;
 }
+
 
 .ant-input-number-input {
   border-color: #eee !important;
