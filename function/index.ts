@@ -3,7 +3,7 @@ export const getRole = (roleId: number| undefined) => {
         case 1:
             return "Admin"
         case 2:
-            return "TeacherAdmin"
+            return "FacultyAdmin"
         case 3:
             return "Teacher"
         case 4:

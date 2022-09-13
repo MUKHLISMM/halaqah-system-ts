@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { border, Box, Center, Heading } from "@chakra-ui/react";
-import { Button, Modal, notification, Popconfirm, Space } from "antd";
+import {  Box, Heading } from "@chakra-ui/react";
+import {  Modal, notification, Popconfirm, Space } from "antd";
 import Table, { ColumnsType, TableProps } from "antd/lib/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
-import { IoMdArrowRoundBack, IoMdHome } from "react-icons/io";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { Account } from "../interface/account";
@@ -16,11 +15,16 @@ import CancelButton from "../component/CancelButton";
 import UpadateButton from "../component/UpdateButton";
 import RegisterForm from "../forms/RegisterForm";
 
-export default function TabStudentForm() {
+interface Props{
+  roleId:number,
+  facultyId?:number
+}
+
+export default function TabTeacherForm({roleId,facultyId}:Props) {
   const { data: session }: any = useSession({ required: true });
   const { data: account } = useSWR<Account[]>(
     session?.user?.accessToken
-      ? ["/accounts?roleId=4", session?.user?.accessToken]
+      ? [`/accounts?roleId=${roleId}${facultyId ? '&&facultyId='+facultyId :''}}`, session?.user?.accessToken]
       : null,
     fetchWithToken
   );
@@ -95,7 +99,6 @@ export default function TabStudentForm() {
       }
     }
   };
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const onClose = () => {
     setId(null);
     setShow(false);
@@ -159,7 +162,7 @@ export default function TabStudentForm() {
         dataSource={account?.map((item: Account, i: number) => ({
           ...item,
           key: i + 1,
-          identificationId: item.roleId === 4 ? item.studentId : item.studentId,
+          identificationId: item.roleId === 3 ? item.teacherId : item.teacherId,
           role: getRole(item.roleId),
         }))}
         onChange={onChange}

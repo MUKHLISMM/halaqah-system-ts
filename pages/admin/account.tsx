@@ -1,42 +1,30 @@
 import {
   Box,
-  Divider,
   Flex,
   Heading,
-  HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spacer,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { Space, Table, Drawer, notification, Popconfirm } from "antd";
-import { ColumnsType, TableProps } from "antd/lib/table";
+import { Space, Drawer, notification, Popconfirm, Result } from "antd";
 import React, { useState } from "react";
 import AddButton from "../../component/AddButton";
 import Tile from "../../component/Tile";
 import Template from "../../template/Template";
-import { MdDeleteOutline, MdPersonAddAlt1 } from "react-icons/md";
+import {  MdPersonAddAlt1 } from "react-icons/md";
 import RegisterForm from "../../forms/RegisterForm";
 import { fetchWithToken, myAxios } from "../../config/axios";
 import CancelButton from "../../component/CancelButton";
-import MyButton from "../../component/MyButton";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { Account } from "../../interface/account";
 import SaveButton from "../../component/SaveButton";
-import TabTeacherForm from "../../Tap/TabTeacherForm";
-import TabStudentForm from "../../Tap/TabStudentForm";
-import { primaryColor } from "../../theme";
+import TableTeacherForm from "../../Table/TableTeacherForm";
+import TableStudentForm from "../../Table/TableStudentForm";
+import TableAdminFrom from "../../Table/TableAdminFrom";
 
 export default function AccountList() {
   const { data: session }: any = useSession({ required: true });
@@ -126,78 +114,76 @@ export default function AccountList() {
 
   return (
     <Template>
-      <HStack>
-        <Tile>
-          <Flex>
-            <Heading size="md" fontSize="20px" pb={5}>
-              user's
-            </Heading>
-            <Spacer />
-            <AddButton
-              onClick={() => {
-                setId(null);
-                setShow(true);
-              }}
-            >
-              <MdPersonAddAlt1 size={20} />
-            </AddButton>
-            <Drawer
-              title={
-                <>
-                  <Box textAlign={"center"}>
-                    <Heading pt={5} fontFamily="-moz-initial" fontSize={20}>
-                      CREATE A NEW ACCOUNT.
-                    </Heading>
-                  </Box>
-                </>
+      <Tile width= "100%">
+        <Flex>
+          <Heading size="md" fontSize="20px" pb={5}>
+            user's
+          </Heading>
+          <Spacer />
+          <AddButton
+            onClick={() => {
+              setId(null);
+              setShow(true);
+            }}
+          >
+            <MdPersonAddAlt1 size={20} />
+          </AddButton>
+          <Drawer
+            title={
+              <>
+                <Box textAlign={"center"}>
+                  <Heading pt={5} fontFamily="-moz-initial" fontSize={20}>
+                    CREATE A NEW ACCOUNT.
+                  </Heading>
+                </Box>
+              </>
+            }
+            width={"large"}
+            onClose={onClose}
+            visible={show}
+            bodyStyle={{ paddingBottom: 80 }}
+            // zIndex={2000}
+          >
+            <RegisterForm
+              onSaveData={id ? updateData : saveData}
+              roleId={
+                id
+                  ? account?.find((item: Account) => item.id === id)?.roleId ||
+                    3
+                  : 3
               }
-              width={"large"}
-              onClose={onClose}
-              visible={show}
-              bodyStyle={{ paddingBottom: 80 }}
-              // zIndex={2000}
-            >
-              <RegisterForm
-                onSaveData={id ? updateData : saveData}
-                roleId={
-                  id
-                    ? account?.find((item: Account) => item.id === id)
-                        ?.roleId || 3
-                    : 3
-                }
-                id={id}
-                saveButton={
-                  <Space>
-                    <SaveButton>Save</SaveButton>
-                    <Popconfirm title={"are your sure!"} onConfirm={onClose}>
-                      <CancelButton>Back</CancelButton>
-                    </Popconfirm>
-                  </Space>
-                }
-              />
-            </Drawer>
-          </Flex>
+              id={id}
+              saveButton={
+                <Space>
+                  <SaveButton>Save</SaveButton>
+                  <Popconfirm title={"are your sure!"} onConfirm={onClose}>
+                    <CancelButton>Back</CancelButton>
+                  </Popconfirm>
+                </Space>
+              }
+            />
+          </Drawer>
+        </Flex>
 
-          <Tabs variant="enclosed">
-            <TabList>
-              <Tab fontFamily={"-moz-initial"} >Faculty-Admin</Tab>
-              <Tab fontFamily={"-moz-initial"}>Teacher</Tab>
-              <Tab fontFamily={"-moz-initial"}>Student</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <p>one!</p>
-              </TabPanel>
-              <TabPanel>
-                <TabTeacherForm />
-              </TabPanel>
-              <TabPanel>
-                <TabStudentForm />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Tile>
-      </HStack>
+        <Tabs colorScheme='green' variant="enclosed">
+          <TabList>
+            <Tab fontFamily={"-moz-initial"}>Faculty-Admin</Tab>
+            <Tab fontFamily={"-moz-initial"}>Teacher</Tab>
+            <Tab fontFamily={"-moz-initial"}>Student</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <TableAdminFrom />
+            </TabPanel>
+            <TabPanel>
+              <TableTeacherForm roleId={3}/>
+            </TabPanel>
+            <TabPanel>
+              <TableStudentForm  roleId={4}/>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Tile>
     </Template>
   );
 }

@@ -21,6 +21,8 @@ export interface Account {
     admin?: any
     student?: Student
     teacher?: Teacher
+    facultyId?: number
+
   }
   export interface Student {
     id?: number

@@ -6,7 +6,7 @@ import { ImMakeGroup } from 'react-icons/im';
 import { MdOutlineManageAccounts } from 'react-icons/md';
 import NavLink from '../component/NavLink';
 
-export default function SubAdmin() {
+export default function FacultyAdmin() {
   return (
     <>
     <li className="menu-header small text-uppercase">
@@ -22,7 +22,7 @@ export default function SubAdmin() {
     </Box>
   </li>
   <li className="menu-item">
-    <NavLink href={"/admin/account"}>
+    <NavLink href={"/facultyAdmin/user"}>
     <Box  className="menu-link">
       <i className="menu-icon tf-icons bx bx-collection"></i>
       <Space>

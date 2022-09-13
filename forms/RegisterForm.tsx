@@ -1,29 +1,21 @@
 import {
   Box,
-  Button,
   Checkbox,
-  Heading,
   Input,
-  InputGroup,
-  InputLeftAddon,
-  InputRightAddon,
-  InputRightElement,
   Text,
   Textarea,
 } from "@chakra-ui/react";
 import { Form, DatePicker, notification, Select, Switch, Divider } from "antd";
 import moment from "moment";
 import { useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import MyButton from "../component/MyButton";
 import SaveButton from "../component/SaveButton";
 import { fetcher, fetchWithToken } from "../config/axios";
 import { RulePassword } from "../constants/RulePassword";
 import { Account } from "../interface/account";
 import { Faculty } from "../interface/faculty";
 import { Major } from "../interface/major";
-import { primaryColor } from "../theme";
 interface Props {
   roleId: number;
   onSaveData: any;
@@ -31,6 +23,7 @@ interface Props {
   saveButton?: any;
 }
 export default function RegisterForm(props: Props) {
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
   const { data: session }: any = useSession();
   const [form] = Form.useForm();
   const { roleId, onSaveData, saveButton, id = null } = props;
@@ -272,7 +265,7 @@ export default function RegisterForm(props: Props) {
         </Box>
         {roleId !== 4 && (
           <Box px={10} display="1">
-            <Form.Item
+            {/* <Form.Item
               name="roleId"
               label={<Text mb="8px">Role:</Text>}
               rules={[
@@ -295,9 +288,14 @@ export default function RegisterForm(props: Props) {
                     .localeCompare(optionB.children.toLowerCase())
                 }
               >
-                <Select.Option value={2}>Admin</Select.Option>
-                <Select.Option value={3}>Teacher</Select.Option>
+                <Select.Option value={3} disabled={componentDisabled}>Murabbee</Select.Option>
               </Select>
+            // </Form.Item> */}
+             <Form.Item
+              name="role"
+              label={<Text mb="8px">Role:</Text>}
+            >
+              <Input placeholder="Murabbee" value={3} disabled={componentDisabled}/>
             </Form.Item>
             <Form.Item
               name="position"
@@ -321,9 +319,19 @@ export default function RegisterForm(props: Props) {
           gridTemplateColumns={["1fr", "1fr", "1fr 1fr"]}
           columnGap={30}
         >
-          <Form.Item name="phoneNumber" label={<Text mb="8px">Phone:</Text>}>
-            <Input type="tel" placeholder="phone number" />
+          <Form.Item
+            name="phoneNumber"
+            label={<Text mb="8px">Phone:</Text>}
+            rules={[
+              {
+                required: true,
+                message: "Please input your Phone!",
+              },
+            ]}
+          >
+          <Input type="tel" placeholder="" />
           </Form.Item>
+
           <Form.Item
             name="lineAccount"
             label={<Text mb="8px">LineAccount:</Text>}
@@ -339,10 +347,16 @@ export default function RegisterForm(props: Props) {
         </Box>
         <Box px={10}>
           <Form.Item
-            name="faccbookAccount"
-            label={<Text mb="8px">FaccbookAccount:</Text>}
+            name="aacebookAccount"
+            label={<Text mb="8px">FacebookAccount:</Text>}
+            rules={[
+              {
+                required: true,
+                message: "Please input your FacebookAccount!",
+              },
+            ]}
           >
-            <Input placeholder="mysite" />
+            <Input placeholder="" />
           </Form.Item>
         </Box>
 

@@ -170,7 +170,7 @@ export default function Login(props: any) {
             Register!!
           </Heading>
           <Text color="white" fontSize={"14"} textAlign={"center"} my={5}>
-            Fill up personal information and start activity with us.
+            Fill up personal information and start activity (STUDENT ONLY)
           </Text>
           <Box textAlign={"center"}>
             <NavLink href="/Register">

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { border, Box, Center, Heading } from "@chakra-ui/react";
-import { Button, Modal, notification, Popconfirm, Space } from "antd";
+import { Box,  Heading } from "@chakra-ui/react";
+import {  Modal, notification, Popconfirm, Space } from "antd";
 import Table, { ColumnsType, TableProps } from "antd/lib/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
-import { IoMdArrowRoundBack, IoMdHome } from "react-icons/io";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { Account } from "../interface/account";
@@ -15,12 +14,16 @@ import UpdateIcon from "../component/UpdateIcon";
 import CancelButton from "../component/CancelButton";
 import UpadateButton from "../component/UpdateButton";
 import RegisterForm from "../forms/RegisterForm";
+interface Props{
+  roleId:number,
+  facultyId?:number
+}
 
-export default function TabTeacherForm() {
+export default function TabStudentForm({roleId,facultyId}:Props) {
   const { data: session }: any = useSession({ required: true });
   const { data: account } = useSWR<Account[]>(
     session?.user?.accessToken
-      ? ["/accounts?roleId=3", session?.user?.accessToken]
+      ? [`/accounts?roleId=${roleId}${facultyId ? '&&facultyId='+facultyId :''}}`, session?.user?.accessToken]
       : null,
     fetchWithToken
   );
@@ -102,11 +105,16 @@ export default function TabTeacherForm() {
   };
 
   const columns: ColumnsType<any> = [
+    // {
+    //   title: "No.",
+    //   render: (value, record, index) => {
+    //     return index + 1;
+    //   },
+    // },
     {
-      title: "No.",
-      render: (value, record, index) => {
-        return index + 1;
-      },
+      title: "Identification ID",
+      dataIndex: "identificationId",
+      render: (text) => <Box>{text}</Box>,
     },
     {
       title: "UserName",
@@ -117,9 +125,12 @@ export default function TabTeacherForm() {
       dataIndex: "email",
     },
     {
-      title: "Identification ID",
-      dataIndex: "identificationId",
-      render: (text) => <Box>{text}</Box>,
+      title: "Faculty",
+      dataIndex: "faculty",
+    },
+    {
+      title: "Major",
+      dataIndex: "major",
     },
     {
       title: "Action",
@@ -159,7 +170,9 @@ export default function TabTeacherForm() {
         dataSource={account?.map((item: Account, i: number) => ({
           ...item,
           key: i + 1,
-          identificationId: item.roleId === 3 ? item.teacherId : item.teacherId,
+          identificationId: item.roleId === 4 ? item.studentId : item.studentId,
+          faculty: item.roleId === 4 ? item.facultyId : item.facultyId,
+          // major: item.roleId === 4 ? item.studentId : item.studentId,
           role: getRole(item.roleId),
         }))}
         onChange={onChange}
